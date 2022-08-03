@@ -21,9 +21,9 @@ const eventSchema = new Schema(
       type: [{type: Schema.Types.ObjectId, ref: 'User'}]
     }
     , 
-    threads: [{type: Schema.Types.ObjectId, ref: "Threads"}],
-    polls: [{type: Schema.Types.ObjectId, ref: "Polls"}],
-    organizer: [{type: Schema.Types.ObjectId, ref: 'User'}]
+    threads: [{type: Schema.Types.ObjectId, ref: 'Thread'}],
+    polls: [{type: Schema.Types.ObjectId, ref: "Poll"}],
+    organizers: [{type: Schema.Types.ObjectId, ref: 'User'}]
   },
   {
     timestamps: true,

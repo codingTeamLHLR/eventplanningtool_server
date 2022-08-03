@@ -9,7 +9,10 @@ const threadSchema = new Schema(
     messages: [{
       message: String, 
       author: {type: Schema.Types.ObjectId, ref: 'User'}, 
-      created: Date.now
+      created: {
+        type: Date, 
+        default: () => Date.now()
+      }
   }], 
     participants: [{type: Schema.Types.ObjectId, ref: 'User'}], 
     status: {
