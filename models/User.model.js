@@ -18,9 +18,9 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Username is required.'],
     },
-    birthday: {
+    birthdate: {
       type: Date, 
-      required: [true, 'Birthday is required.'],
+      required: [true, 'Birthdate is required.'],
       min: () => Date.now() - 24 * 60 * 60 * 365 * 110,
       max: () => Date.now() 
     }
