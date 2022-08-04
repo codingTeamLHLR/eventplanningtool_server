@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const mongoose = require('mongoose');
-const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 const Event = require('../models/Event.model');
 const Thread = require('../models/Thread.model');
@@ -8,8 +7,9 @@ const Poll = require('../models/Poll.model');
 
 //Create a new event
 router.post('/events', (req, res, next) => {
-    const { name, date, location, participants, organizers } = req.body;
-  
+    const { name, date, location, participants, otherOrganizers } = req.body;
+    const userId = req.payload._id
+
     Event
         .create({ 
             name, 
@@ -18,21 +18,18 @@ router.post('/events', (req, res, next) => {
             participants, 
             threads: [], 
             polls: [], 
-            organizers //default current one??? or in frontend
+            organizers: [userId, otherOrganizers]
         })
         .then(response => res.json(response))
         .catch(err => res.json(err));
   });
 
 
-
-//PROTECT -- only events when participant or invited
-
-
-
-//Get all events
+//Get all events as participant or organizer
 router.get('/events', (req, res, next) => {
-    Event.find()
+    const userId = req.payload._id
+
+    Event.find({ $or:[{organizers: { $in: userId }}, {participants: { $in: userId }}] })
         .then(events => res.json(events))
         .catch(err => res.json(err));
 });
@@ -52,25 +49,31 @@ router.get('/events/:eventId', (req, res, next) => {
         .catch(error => res.json(error));
 });
 
-//Update specific event ---- PROTECT!!!
+//Update specific event (protected for organizers)
 router.put('/events/:eventId', (req, res, next) => {
     const { eventId } = req.params;
+    const userId = req.payload._id
    
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
         res.status(400).json({ message: 'Specified id is not valid' });
         return;
     }
-   
-    Event.findByIdAndUpdate(eventId, req.body, { returnDocument: 'after' })
+
+    Event.findById(eventId)
+        .then((event) => {
+            if (!event.organizers.includes(userId)) {
+                throw new Error("No permission to edit this event")
+            } 
+            return Event.findByIdAndUpdate(eventId, req.body, { returnDocument: 'after' })
+        })
         .then((updatedEvent) => res.json(updatedEvent))
-        .catch(error => res.json(error));
+        .catch(error => res.status(400).json({ message: error.message }))
   });
 
-  //Delete specific event ---FIX
-  router.delete('/events/:eventId', isAuthenticated, (req, res, next) => {
+  //Delete specific event (protected for organizers)
+  router.delete('/events/:eventId', (req, res, next) => {
     const { eventId } = req.params;
     const userId = req.payload._id
-    console.log(userId);
    
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
         res.status(400).json({ message: 'Specified id is not valid' });
