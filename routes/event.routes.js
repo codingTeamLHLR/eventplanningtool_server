@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const mongoose = require('mongoose');
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 const Event = require('../models/Event.model');
 const Thread = require('../models/Thread.model');
@@ -23,6 +24,12 @@ router.post('/events', (req, res, next) => {
         .catch(err => res.json(err));
   });
 
+
+
+//PROTECT -- only events when participant or invited
+
+
+
 //Get all events
 router.get('/events', (req, res, next) => {
     Event.find()
@@ -45,7 +52,7 @@ router.get('/events/:eventId', (req, res, next) => {
         .catch(error => res.json(error));
 });
 
-//Update specific event
+//Update specific event ---- PROTECT!!!
 router.put('/events/:eventId', (req, res, next) => {
     const { eventId } = req.params;
    
@@ -59,28 +66,35 @@ router.put('/events/:eventId', (req, res, next) => {
         .catch(error => res.json(error));
   });
 
-  //Delete specific event
-  router.delete('/events/:eventId', (req, res, next) => {
+  //Delete specific event ---FIX
+  router.delete('/events/:eventId', isAuthenticated, (req, res, next) => {
     const { eventId } = req.params;
+    const userId = req.payload._id
+    console.log(userId);
    
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
         res.status(400).json({ message: 'Specified id is not valid' });
         return;
     }
+    
+    Event.findById(eventId)
+    .then((event) => {
+        if (!event.organizers.includes(userId)) {
+            throw new Error("No permission to delete this event")
+        } 
+        return Event.findByIdAndRemove(eventId)
+    })
+    .then(deletedEvent => {
+        const deleteThreads = Thread.deleteMany({ _id: { $in: deletedEvent.threads } });
+        const deletePolls = Poll.deleteMany({ _id: { $in: deletedEvent.polls } });
 
-    Event.findByIdAndRemove(eventId)
-        .then(deletedEvent => {
-            
-            const deleteThreads = Thread.deleteMany({ _id: { $in: deletedEvent.threads } });
-            const deletePolls = Poll.deleteMany({ _id: { $in: deletedEvent.polls } });
         return Promise.all([deleteThreads, deletePolls])
-        })
-        .then((response) => {
-            console.log(response)
-            res.json({ message: `Event with ${eventId} is removed successfully.` })
-        })
-        .catch(error => res.json(error));
-  });
+    })
+    .then((response) => {
+        res.json({ message: `Event with ${eventId} is removed successfully.` })
+    })
+    .catch(error => res.status(400).json({ message: error.message }))
+    });
 
 
 module.exports = router;
