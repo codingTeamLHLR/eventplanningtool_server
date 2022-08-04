@@ -7,7 +7,7 @@ const Poll = require('../models/Poll.model');
 
 //Create a new event
 router.post('/events', (req, res, next) => {
-    const { name, date, location, participants, otherOrganizers } = req.body;
+    const { name, date, location, otherParticipants, otherOrganizers } = req.body;
     const userId = req.payload._id
 
     Event
@@ -15,7 +15,7 @@ router.post('/events', (req, res, next) => {
             name, 
             date, 
             location, 
-            participants, 
+            participants: [userId, otherParticipants], 
             threads: [], 
             polls: [], 
             organizers: [userId, otherOrganizers]
@@ -29,7 +29,7 @@ router.post('/events', (req, res, next) => {
 router.get('/events', (req, res, next) => {
     const userId = req.payload._id
 
-    Event.find({ $or:[{organizers: { $in: userId }}, {participants: { $in: userId }}] })
+    Event.find({participants: { $in: userId }})
         .then(events => res.json(events))
         .catch(err => res.json(err));
 });
