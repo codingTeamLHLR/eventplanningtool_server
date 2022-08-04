@@ -20,13 +20,13 @@ router.post("/signup", (req, res) => {
   const { email, password, username, birthdate } = req.body;
 
   if (email === '' || password === '' || username === '' || birthdate === '') {
-    res.status(400).json({ message: "Provide email, password, name and birthdate" });
+    res.status(400).json({ errorMessage: "Provide email, password, name and birthdate" });
     return;
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({ message: 'Provide a valid email address.' });
+    res.status(400).json({ errorMessage: 'Provide a valid email address.' });
     return;
   }
 

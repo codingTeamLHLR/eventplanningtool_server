@@ -13,6 +13,7 @@ const createToken = (user) => {
     { algorithm: 'HS256', expiresIn: "6h" }
     );
 
+    jwt.decode
     return authToken;
 };
 
