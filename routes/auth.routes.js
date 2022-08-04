@@ -14,8 +14,6 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const createToken = require("../services/createToken");
 
-
-
 router.post("/signup", (req, res) => {
   const { email, password, username, birthdate } = req.body;
 
