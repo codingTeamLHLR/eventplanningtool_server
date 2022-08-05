@@ -14,8 +14,6 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 const createToken = require("../services/createToken");
 
-
-
 router.post("/signup", (req, res) => {
   const { email, password, username, birthdate } = req.body;
 
@@ -69,9 +67,9 @@ router.post("/signup", (req, res) => {
       })
       .catch((error) => {
         if (error instanceof mongoose.Error.ValidationError) {
-          return res.status(400).json({ errorMessage: error.message });
+          return res.status(400).json({ message: error.message });
         }
-        return res.status(500).json({ errorMessage: error.message });
+        return res.status(500).json({ message: error.message });
       });
   });
 });
@@ -113,9 +111,7 @@ router.post("/login", (req, res, next) => {
     })
 
     .catch((err) => {
-
       next(err);
-
     });
 });
 
