@@ -7,15 +7,25 @@ const Poll = require('../models/Poll.model');
 
 //Create a new event
 router.post('/events', (req, res, next) => {
-    const { name, date, location, otherParticipants, otherOrganizers } = req.body;
-    const userId = req.payload._id
 
+    
+    const { name, date, location, participants, otherOrganizers } = req.body;
+    const userId = req.payload._id;
+
+    const allParticipants = [userId, ...participants]
+    
+    if (name === '') {
+        return res
+          .status(400)
+          .json({ errorMessage: "Please provide a name for your event." });
+      }
+      
     Event
         .create({ 
             name, 
             date, 
             location, 
-            participants: [userId, otherParticipants], 
+            participants: allParticipants, 
             threads: [], 
             polls: [], 
             organizers: [userId, otherOrganizers]

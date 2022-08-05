@@ -19,8 +19,10 @@ const eventSchema = new Schema(
     }, 
     participants: {
       type: [{type: Schema.Types.ObjectId, ref: 'User'}]
-    }
-    , 
+    },
+
+    // participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
+
     threads: [{type: Schema.Types.ObjectId, ref: 'Thread'}],
     polls: [{type: Schema.Types.ObjectId, ref: "Poll"}],
     organizers: [{type: Schema.Types.ObjectId, ref: 'User'}]
