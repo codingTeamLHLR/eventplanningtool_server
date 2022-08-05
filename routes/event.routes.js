@@ -5,8 +5,10 @@ const Event = require('../models/Event.model');
 const Thread = require('../models/Thread.model');
 const Poll = require('../models/Poll.model');
 
+const fileUploader = require('../config/cloudinary.config');
+
 //Create a new event
-router.post('/events', (req, res, next) => {
+router.post('/events', fileUploader.single('event-cover-image'), (req, res, next) => {
     const { name, date, location, otherParticipants, otherOrganizers } = req.body;
     const userId = req.payload._id
 
@@ -18,7 +20,8 @@ router.post('/events', (req, res, next) => {
             participants: [userId, otherParticipants], 
             threads: [], 
             polls: [], 
-            organizers: [userId, otherOrganizers]
+            organizers: [userId, otherOrganizers], 
+            image: req.file.path
         })
         .then(response => res.json(response))
         .catch(err => res.json(err));
@@ -50,9 +53,17 @@ router.get('/events/:eventId', (req, res, next) => {
 });
 
 //Update specific event (protected for organizers)
-router.put('/events/:eventId', (req, res, next) => {
+router.put('/events/:eventId', fileUploader.single('event-cover-image'), (req, res, next) => {
     const { eventId } = req.params;
-    const userId = req.payload._id
+    const userId = req.payload._id;
+    const { name, date, location, participants, organizers, existingImage } = req.body;
+
+    let image;
+    if (req.file) {
+        image = req.file.path;
+    } else {
+        image = existingImage;
+    }
    
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
         res.status(400).json({ message: 'Specified id is not valid' });
@@ -64,7 +75,7 @@ router.put('/events/:eventId', (req, res, next) => {
             if (!event.organizers.includes(userId)) {
                 throw new Error("No permission to edit this event")
             } 
-            return Event.findByIdAndUpdate(eventId, req.body, { returnDocument: 'after' })
+            return Event.findByIdAndUpdate(eventId, { name, date, location, participants, organizers, image }, { returnDocument: 'after' })
         })
         .then((updatedEvent) => res.json(updatedEvent))
         .catch(error => res.status(400).json({ message: error.message }))

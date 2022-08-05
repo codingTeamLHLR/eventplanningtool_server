@@ -23,7 +23,8 @@ const eventSchema = new Schema(
     , 
     threads: [{type: Schema.Types.ObjectId, ref: 'Thread'}],
     polls: [{type: Schema.Types.ObjectId, ref: "Poll"}],
-    organizers: [{type: Schema.Types.ObjectId, ref: 'User'}]
+    organizers: [{type: Schema.Types.ObjectId, ref: 'User'}], 
+    image: String
   },
   {
     timestamps: true,
