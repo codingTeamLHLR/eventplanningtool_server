@@ -21,12 +21,21 @@ router.post('/events', fileUploader.single('image'), (req, res, next) => {
     //     image = "https://foto.wuestenigel.com/wp-content/uploads/api/dj-pult-party.jpeg"
     // }
 
+
+    const allParticipants = [userId, ...participants]
+    
+    if (name === '') {
+        return res
+          .status(400)
+          .json({ errorMessage: "Please provide a name for your event." });
+      }
+      
     Event
         .create({ 
             name, 
             date, 
             location, 
-            participants: [userId],
+            participants: allParticipants, 
             threads: [], 
             polls: [], 
             organizers: [userId, otherOrganizers], 
