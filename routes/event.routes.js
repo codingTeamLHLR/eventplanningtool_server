@@ -65,7 +65,7 @@ router.get('/events/:eventId', (req, res, next) => {
     }
     
     Event.findById(eventId)
-        .populate('threads polls')
+        .populate('threads polls participants organizers')
         .then(event => res.status(200).json(event))
         .catch(error => res.json(error));
 });

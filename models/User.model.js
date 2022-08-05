@@ -23,7 +23,8 @@ const userSchema = new Schema(
       required: [true, 'Birthdate is required.'],
       min: () => "1900-01-01",
       max: () => Date.now() 
-    }
+    },
+    image: String
   },
   {
     timestamps: true,
