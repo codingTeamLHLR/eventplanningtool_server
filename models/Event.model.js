@@ -12,8 +12,8 @@ const eventSchema = new Schema(
     },
     location: {
       street: String, 
-      housenumber: Number,
-      citycode: Number, 
+      housenumber: String,
+      citycode: String, 
       city: String,
       country: String
     }, 

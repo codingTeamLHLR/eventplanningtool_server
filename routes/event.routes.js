@@ -9,20 +9,11 @@ const fileUploader = require('../config/cloudinary.config');
 
 //Create a new event
 router.post('/events', fileUploader.single('image'), (req, res, next) => {
-    const { name, date, location, participants, otherOrganizers, image } = req.body;
+    const { name, date, location, participants, organizers, image } = req.body;
     const userId = req.payload._id
 
-    // console.log(req)
-    
-    // let image;
-    // if (req.file) {
-    //     image = req.file.path;
-    // } else {
-    //     image = "https://foto.wuestenigel.com/wp-content/uploads/api/dj-pult-party.jpeg"
-    // }
-
-
     const allParticipants = [userId, ...participants]
+    const allOrganizers = [userId, ...organizers]
     
     if (name === '') {
         return res
@@ -38,7 +29,7 @@ router.post('/events', fileUploader.single('image'), (req, res, next) => {
             participants: allParticipants, 
             threads: [], 
             polls: [], 
-            organizers: [userId, otherOrganizers], 
+            organizers: allOrganizers, 
             image
         })
         .then(response => res.json(response))
@@ -74,14 +65,7 @@ router.get('/events/:eventId', (req, res, next) => {
 router.put('/events/:eventId', fileUploader.single('event-cover-image'), (req, res, next) => {
     const { eventId } = req.params;
     const userId = req.payload._id;
-    const { name, date, location, participants, organizers } = req.body;
-
-    // let image;
-    // if (req.file) {
-    //     image = req.file.path;
-    // } else {
-    //     image = existingImage;
-    // }
+    const { name, date, location, participants, organizers, image } = req.body;
    
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
         res.status(400).json({ message: 'Specified id is not valid' });
