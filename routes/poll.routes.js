@@ -6,15 +6,21 @@ const Event = require("../models/Event.model");
 
 //Create a new poll
 router.post("/polls", (req, res, next) => {
-  const { title, options, participants, eventId } = req.body;
+  const { title, optionNames, eventId } = req.body;
+
+  let options = [];
+  
+  optionNames.forEach(name => {
+    options = [...options, {name: name}];
+  });
 
   Poll.create({
     title,
     options,
-    participants,
     event: eventId,
   })
     .then((poll) => {
+      console.log("poll", poll)
       return Event.findByIdAndUpdate(eventId, { $push: { polls: poll._id } });
     })
     .then((response) => res.json(response))
@@ -25,7 +31,7 @@ router.post("/polls", (req, res, next) => {
 router.get("/polls", (req, res, next) => {
   const { eventId } = req.body;
 
-  Poll.find({ event: eventId })
+  Poll.find({ eventId })
     .then((polls) => res.json(polls))
     .catch((err) => res.json(err));
 });

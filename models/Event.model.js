@@ -17,19 +17,23 @@ const eventSchema = new Schema(
       city: String,
       country: String,
     },
-    participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
-    // participants: [{
-    //   user: {type: Schema.Types.ObjectId, ref: 'User'}, 
-    //   status: {
-    //     type: String, 
-    //     enum: ["accepted", "pending", "declined"],
-    //     default: "pending"
-    //   }
-    // }],
+    // participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    participants: [{
+      user: {type: Schema.Types.ObjectId, ref: 'User'}, 
+      status: {
+        type: String, 
+        enum: ["accepted", "pending", "declined"],
+        default: "pending"
+      }
+    }],
     threads: [{ type: Schema.Types.ObjectId, ref: "Thread" }],
     polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }],
     organizers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     image: String,
+    public: {
+      type: Boolean, 
+      default: false
+    }
   },
   {
     timestamps: true,

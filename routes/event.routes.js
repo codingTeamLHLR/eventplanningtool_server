@@ -10,8 +10,16 @@ router.post("/events", (req, res, next) => {
   const { name, date, location, participants, organizers, image } = req.body;
   const userId = req.payload._id;
 
-  const allParticipants = [userId, ...participants];
-  const allOrganizers = [userId, ...organizers];
+  const allParticipants = [{user: userId, status: "accepted"}]
+
+    if(participants){
+      participants.forEach((participant) => allParticipants.push({user: participant}));
+    }
+
+  const allOrganizers = [userId]
+    if(organizers){
+      allOrganizers.push(...organizers);
+  }
 
   if (name === "") {
     return res
@@ -37,7 +45,7 @@ router.post("/events", (req, res, next) => {
 router.get("/events", (req, res, next) => {
   const userId = req.payload._id;
 
-  Event.find({ participants: { $in: userId } })
+  Event.find({'participants.user':{ $in: userId }})
     .then((events) => res.json(events))
     .catch((err) => res.json(err));
 });
@@ -52,7 +60,11 @@ router.get("/events/:eventId", (req, res, next) => {
   }
 
   Event.findById(eventId)
-    .populate("threads polls participants organizers")
+    .populate("threads polls organizers")
+    .populate({
+      path: "participants", 
+      populate: { path: "user"}
+    })
     .then((event) => res.status(200).json(event))
     .catch((error) => res.json(error));
 });
@@ -68,14 +80,29 @@ router.put("/events/:eventId", (req, res, next) => {
     return;
   }
 
+  const allParticipants = [];
+  const newParticipants = [...participants];
+
   Event.findById(eventId)
     .then((event) => {
       if (!event.organizers.includes(userId)) {
         throw new Error("No permission to edit this event");
       }
+
+      event.participants.forEach((prevParticipant) => {
+        const search = JSON.stringify(prevParticipant.user).replaceAll("\"","");
+
+        if(participants.includes(search)) {
+          allParticipants.push({user: search, status: prevParticipant.status});
+          newParticipants.splice(newParticipants.indexOf(search), 1);
+        }
+      })
+
+      newParticipants.forEach((newParticipant) => allParticipants.push({user: newParticipant}))
+
       return Event.findByIdAndUpdate(
         eventId,
-        { name, date, location, participants, organizers, image },
+        { name, date, location, participants: allParticipants, organizers, image },
         { returnDocument: "after" }
       );
     })
