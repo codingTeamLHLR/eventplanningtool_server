@@ -18,6 +18,14 @@ const eventSchema = new Schema(
       country: String,
     },
     participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    // participants: [{
+    //   user: {type: Schema.Types.ObjectId, ref: 'User'}, 
+    //   status: {
+    //     type: String, 
+    //     enum: ["accepted", "pending", "declined"],
+    //     default: "pending"
+    //   }
+    // }],
     threads: [{ type: Schema.Types.ObjectId, ref: "Thread" }],
     polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }],
     organizers: [{ type: Schema.Types.ObjectId, ref: "User" }],
