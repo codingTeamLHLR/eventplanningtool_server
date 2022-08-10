@@ -18,7 +18,7 @@ const pollSchema = new Schema(
         },
       },
     ],
-    participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    // participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
     status: {
       type: String,
       enum: ["active", "closed"],
