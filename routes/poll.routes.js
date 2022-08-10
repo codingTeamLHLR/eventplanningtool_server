@@ -6,7 +6,8 @@ const Event = require("../models/Event.model");
 
 //Create a new poll
 router.post("/polls", (req, res, next) => {
-  const { title, optionNames, eventId } = req.body;
+  const { title, optionNames, participants, eventId } = req.body;
+  const userId = req.payload._id;
 
   let options = [];
   
@@ -14,10 +15,17 @@ router.post("/polls", (req, res, next) => {
     options = [...options, {name: name}];
   });
 
+  const allParticipants = [userId]
+  if(participants){
+    allParticipants.push(...participants);
+}
+
   Poll.create({
     title,
     options,
+    participants: allParticipants,
     event: eventId,
+    owner: userId
   })
     .then((poll) => {
       console.log("poll", poll)
@@ -29,9 +37,9 @@ router.post("/polls", (req, res, next) => {
 
 //Get all polls
 router.get("/polls", (req, res, next) => {
-  const { eventId } = req.body;
+  const userId = req.payload._id;
 
-  Poll.find({ eventId })
+  Poll.find({ participants: { $in: userId }})
     .then((polls) => res.json(polls))
     .catch((err) => res.json(err));
 });
@@ -53,15 +61,26 @@ router.get("/polls/:pollId", (req, res, next) => {
 //Update specific poll
 router.put("/polls/:pollId", (req, res, next) => {
   const { pollId } = req.params;
+  const { status, newVotes, optionId} = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(pollId)) {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
   }
 
-  Poll.findByIdAndUpdate(pollId, req.body, { returnDocument: "after" })
+  if(status){
+  Poll.findByIdAndUpdate(pollId, {status}, { returnDocument: "after" })
     .then((updatedPoll) => res.json(updatedPoll))
     .catch((error) => res.json(error));
+  }
+  if(newVotes){
+    Poll.findOneAndUpdate({pollId, 'options._id':{ $in: optionId }}, {$set: {"options.$.votes": newVotes}}, { returnDocument: "after" })
+    .then((updatedPoll) => {
+      res.json(updatedPoll)
+      console.log(updatedPoll)
+    })
+      .catch((error) => res.json(error));
+    }
 });
 
 //Delete specific poll
