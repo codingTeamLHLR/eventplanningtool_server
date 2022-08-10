@@ -141,4 +141,20 @@ router.delete("/events/:eventId", (req, res, next) => {
     .catch((error) => res.status(400).json({ message: error.message }));
 });
 
+router.put("/events/:eventId/status", (req, res, next) => {
+  const { eventId } = req.params;
+  const userId = req.payload._id;
+  const status = req.body;
+
+  Event.findByIdAndUpdate( eventId, {'participants.user':{ $in: userId }} )
+    .then(response => {
+      return 
+    })
+
+    .then((updatedEvent) => res.json(updatedEvent))
+    .catch((error) => res.json(error))
+}
+
+)
+
 module.exports = router;
