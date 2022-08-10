@@ -13,7 +13,9 @@ router.post("/events", (req, res, next) => {
   const allParticipants = [{user: userId, status: "accepted"}]
 
     if(participants){
-      participants.forEach((participant) => allParticipants.push({user: participant}));
+      participants.forEach((participant) => {
+        allParticipants.push({user: participant})
+      });
     }
 
   const allOrganizers = [userId]
