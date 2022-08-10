@@ -10,8 +10,18 @@ router.post("/events", (req, res, next) => {
   const { name, date, location, participants, organizers, image } = req.body;
   const userId = req.payload._id;
 
-  const allParticipants = [userId, ...participants];
-  const allOrganizers = [userId, ...organizers];
+//   console.log(participants)
+//   console.log(userId)
+
+  const allParticipants = [userId]
+  if(participants){
+  allParticipants.push(...participants);
+  }
+
+  const allOrganizers = [userId]
+  if(organizers){
+    allOrganizers.push(...organizers);
+  }
 
   if (name === "") {
     return res
@@ -62,8 +72,6 @@ router.put("/events/:eventId", (req, res, next) => {
   const { eventId } = req.params;
   const userId = req.payload._id;
   const { name, date, location, participants, organizers, image } = req.body;
-//   const allParticipants = [userId, ...participants];
-//   const allOrganizers = [userId, ...organizers];
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
     res.status(400).json({ message: "Specified id is not valid" });
