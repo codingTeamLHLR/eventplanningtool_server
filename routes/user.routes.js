@@ -6,41 +6,27 @@ const User = require("../models/User.model");
 router.get("/users", (req, res) => {
   if (!req.query.ids) {
     User.find()
-<<<<<<< HEAD
       .then((users) => {
         const newUsers = users.map((user) => {
           const { email, username, birthdate, _id } = user;
 
           return { email, username, birthdate, _id };
         });
-
-        res.json(newUsers);
-=======
-      .select({ username: 1, image: 1, birthdate: 1, _id: 1 })
-      .then((user) => {
         res.json(user);
->>>>>>> e72ebddb4833eaa3ec0353a55b23a88dc6488b52
       })
       .catch((err) => {
         res.json(err);
       });
   } else {
     User.find({ _id: req.query.ids })
-<<<<<<< HEAD
       .then((users) => {
         const newUsers = users.map((user) => {
           const { email, username, birthdate, _id } = user;
 
           return { email, username, birthdate, _id };
         });
-
+      
         res.json(newUsers);
-=======
-      .select({ username: 1, image: 1, birthdate: 1, _id: 1 })
-      .then((user) => {
-        console.log(user);
-        res.json(user);
->>>>>>> e72ebddb4833eaa3ec0353a55b23a88dc6488b52
       })
       .catch((err) => {
         res.json(err);
@@ -57,14 +43,6 @@ router.get("/users/:userId", (req, res) => {
   }
 
   User.findById(userId)
-<<<<<<< HEAD
-    .then((user) => {
-      const { email, username, birthdate, _id } = user;
-
-      const newUser = { email, username, birthdate, _id };
-
-      res.status(200).json(newUser);
-=======
     .select({ username: 1, image: 1, birthdate: 1, _id: 1 })
     .then((user) => {
       res.json(user);
@@ -103,7 +81,6 @@ router.delete("/users/:userId", (req, res) => {
   User.findByIdAndRemove(userId)
     .then((response) => {
       res.json({ message: `User with ${userId} is removed successfully.` });
->>>>>>> e72ebddb4833eaa3ec0353a55b23a88dc6488b52
     })
     .catch((error) => res.json(error));
 });

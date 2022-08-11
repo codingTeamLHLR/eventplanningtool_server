@@ -54,11 +54,7 @@ router.post("/signup", (req, res) => {
           password: hashedPassword,
           username,
           birthdate,
-<<<<<<< HEAD
           image
-=======
-          image,
->>>>>>> e72ebddb4833eaa3ec0353a55b23a88dc6488b52
         });
       })
       .then((user) => {
