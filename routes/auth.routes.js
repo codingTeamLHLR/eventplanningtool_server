@@ -15,7 +15,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const createToken = require("../services/createToken");
 
 router.post("/signup", (req, res) => {
-  const { email, password, username, birthdate } = req.body;
+  const { email, password, username, birthdate, image } = req.body;
 
   if (email === "" || password === "" || username === "" || birthdate === "") {
     res
@@ -54,7 +54,11 @@ router.post("/signup", (req, res) => {
           password: hashedPassword,
           username,
           birthdate,
+<<<<<<< HEAD
           image
+=======
+          image,
+>>>>>>> e72ebddb4833eaa3ec0353a55b23a88dc6488b52
         });
       })
       .then((user) => {
@@ -95,11 +99,9 @@ router.post("/login", (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        return res
-          .status(400)
-          .json({
-            errorMessage: "This email does not exist, please signup first.",
-          });
+        return res.status(400).json({
+          errorMessage: "This email does not exist, please signup first.",
+        });
       }
 
       bcrypt.compare(password, user.password).then((isSamePassword) => {
