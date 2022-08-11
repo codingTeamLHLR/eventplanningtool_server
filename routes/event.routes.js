@@ -46,6 +46,7 @@ router.get("/events", (req, res, next) => {
   const userId = req.payload._id;
 
   Event.find({ "participants.user": { $in: userId } })
+    .populate("organizers")
     .then((events) => res.json(events))
     .catch((err) => res.json(err));
 });
