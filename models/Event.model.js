@@ -17,7 +17,6 @@ const eventSchema = new Schema(
       city: String,
       country: String,
     },
-    // participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
     participants: [{
       user: {type: Schema.Types.ObjectId, ref: 'User'}, 
       status: {

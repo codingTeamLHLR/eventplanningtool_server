@@ -54,12 +54,13 @@ router.post("/signup", (req, res) => {
           password: hashedPassword,
           username,
           birthdate,
+          image
         });
       })
       .then((user) => {
-        const { email, username, birthdate, _id } = user;
+        const { email, username, birthdate, _id, image } = user;
 
-        const newUser = { email, username, birthdate, _id };
+        const newUser = { email, username, birthdate, _id, image };
 
         const authToken = createToken(user);
 
@@ -118,7 +119,6 @@ router.post("/login", (req, res, next) => {
 });
 
 router.get("/verify", isAuthenticated, (req, res, next) => {
-  console.log(`req.payload`, req.payload);
 
   res.json(req.payload);
 });

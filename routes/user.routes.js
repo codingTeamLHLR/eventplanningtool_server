@@ -4,22 +4,30 @@ const mongoose = require("mongoose");
 const User = require("../models/User.model");
 
 router.get("/users", (req, res) => {
-  console.log("req.query iiiiiis:");
-  console.log(req.query);
-  console.log(req.query.ids);
-
   if (!req.query.ids) {
     User.find()
-      .then((user) => {
-        res.json(user);
+      .then((users) => {
+        const newUsers = users.map((user) => {
+          const { email, username, birthdate, _id } = user;
+
+          return { email, username, birthdate, _id };
+        });
+
+        res.json(newUsers);
       })
       .catch((err) => {
         res.json(err);
       });
   } else {
     User.find({ _id: req.query.ids })
-      .then((user) => {
-        res.json(user);
+      .then((users) => {
+        const newUsers = users.map((user) => {
+          const { email, username, birthdate, _id } = user;
+
+          return { email, username, birthdate, _id };
+        });
+
+        res.json(newUsers);
       })
       .catch((err) => {
         res.json(err);
@@ -36,7 +44,13 @@ router.get("/users/:userId", (req, res) => {
   }
 
   User.findById(userId)
-    .then((user) => res.status(200).json(user))
+    .then((user) => {
+      const { email, username, birthdate, _id } = user;
+
+      const newUser = { email, username, birthdate, _id };
+
+      res.status(200).json(newUser);
+    })
     .catch((error) => res.json(error));
 });
 

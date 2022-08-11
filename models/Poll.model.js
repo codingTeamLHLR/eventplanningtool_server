@@ -6,6 +6,7 @@ const pollSchema = new Schema(
       type: String,
       required: true,
     },
+    description: String,
     options: [
       {
         name: {
@@ -18,7 +19,13 @@ const pollSchema = new Schema(
         },
       },
     ],
-    participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    participants: [{
+      user: {type: Schema.Types.ObjectId, ref: 'User'}, 
+      voted: {
+        type: Boolean, 
+        default: false
+      }
+    }],
     status: {
       type: String,
       enum: ["active", "closed"],
