@@ -6,12 +6,8 @@ const User = require("../models/User.model");
 router.get("/users", (req, res) => {
   if (!req.query.ids) {
     User.find()
-      .then((users) => {
-        const newUsers = users.map((user) => {
-          const { email, username, birthdate, _id } = user;
-
-          return { email, username, birthdate, _id };
-        });
+      .select({ username: 1, image: 1, birthdate: 1, _id: 1 })
+      .then((user) => {
         res.json(user);
       })
       .catch((err) => {
@@ -19,14 +15,10 @@ router.get("/users", (req, res) => {
       });
   } else {
     User.find({ _id: req.query.ids })
-      .then((users) => {
-        const newUsers = users.map((user) => {
-          const { email, username, birthdate, _id } = user;
-
-          return { email, username, birthdate, _id };
-        });
-      
-        res.json(newUsers);
+      .select({ username: 1, image: 1, birthdate: 1, _id: 1 })
+      .then((user) => {
+        console.log(user);
+        res.json(user);
       })
       .catch((err) => {
         res.json(err);
@@ -45,6 +37,7 @@ router.get("/users/:userId", (req, res) => {
   User.findById(userId)
     .select({ username: 1, image: 1, birthdate: 1, _id: 1 })
     .then((user) => {
+      console.log(user);
       res.json(user);
     })
     .catch((error) => res.json(error));
