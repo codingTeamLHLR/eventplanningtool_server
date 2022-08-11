@@ -9,6 +9,11 @@ router.post("/polls", (req, res, next) => {
   const { title, description, optionNames, participants, eventId } = req.body;
   const userId = req.payload._id;
 
+  if (title === "") {
+    return res.status(400).json({ errorMessage: "Please provide a title for your poll." });
+  }
+
+
   let options = [];
 
   optionNames.forEach((name) => {

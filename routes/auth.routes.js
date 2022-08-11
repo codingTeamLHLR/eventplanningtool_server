@@ -28,17 +28,17 @@ router.post("/signup", (req, res) => {
   if (password === "" || !passwordRegex.test(password)) {
     return res.status(400).json({
       errorMessagePassword:
-        "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
+        "The password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
   }
 
   if (username === "") {
-    return res.status(400).json({ errorMessageUsername: "Provide a username" });
+    return res.status(400).json({ errorMessageUsername: "Please provide a username" });
   }
 
   User.findOne({ email }).then((found) => {
     if (found) {
-      return res.status(400).json({ errorMessage: "Email already exists." });
+      return res.status(400).json({ errorMessage: "This email already exists." });
     }
 
     // if user is not found, create a new user - start with hashing the password
@@ -85,7 +85,7 @@ router.post("/login", (req, res, next) => {
   if (password === "" || !passwordRegex.test(password)) {
     return res.status(400).json({
       errorMessagePassword:
-        "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
+        "The password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
   }
 
@@ -93,13 +93,13 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(400).json({
-          errorMessage: "This email does not exist, please signup first.",
+          errorMessageEmail: "This email does not exist, please signup first.",
         });
       }
 
       bcrypt.compare(password, user.password).then((isSamePassword) => {
         if (!isSamePassword) {
-          return res.status(400).json({ errorMessage: "Wrong credentials." });
+          return res.status(400).json({ errorMessagePassword: "Wrong credentials." });
         }
 
         const authToken = createToken(user);
