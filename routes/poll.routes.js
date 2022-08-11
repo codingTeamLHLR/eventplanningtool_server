@@ -67,7 +67,8 @@ router.put("/polls/:pollId", (req, res, next) => {
   const { pollId } = req.params;
   const { status, newVotes, optionId, voted } = req.body;
   const userId = req.payload._id;
-
+console.log(pollId)
+  console.log(req.body)
   if (!mongoose.Types.ObjectId.isValid(pollId)) {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
@@ -82,25 +83,32 @@ router.put("/polls/:pollId", (req, res, next) => {
   if (newVotes && voted) {
     const updateVotes = new Promise((resolve, reject) => {
       Poll.findOneAndUpdate(
-        { pollId, "options._id": { $in: optionId } },
+        { _id: pollId, "options._id": { $in: optionId } },
         { $set: { "options.$.votes": newVotes } },
         { returnDocument: "after" }
       )
-      .then((updatedPoll) => resolve(updatedPoll));
+      .then((updatedPoll) => resolve(updatedPoll))
+      .catch(error => reject(error));
+
     });
     
     const updateParticipant = new Promise((resolve, reject) => {
       Poll.findOneAndUpdate(
-        { pollId, "participants.user": userId },
+        { _id: pollId, "participants.user": userId },
         { $set: { "participants.$.voted": voted } },
         { returnDocument: "after" }
       )
-      .then((updatedPoll) => resolve(updatedPoll));
+      .then((updatedPoll) => resolve(updatedPoll))
+      .catch(error => reject(error));
     });
 
-    Promise.all(updateVotes, updateParticipant)
-      .then((response) => res.json(response))
-      .catch((error) => res.json(error));
+    Promise.all([updateVotes, updateParticipant])
+      .then((response) => {
+        console.log(response)
+        res.json(response)})
+      .catch((error) => {
+        console.log(error)
+        res.json(error)});
   }
 });
 
