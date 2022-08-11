@@ -19,20 +19,22 @@ const pollSchema = new Schema(
         },
       },
     ],
-    participants: [{
-      user: {type: Schema.Types.ObjectId, ref: 'User'}, 
-      voted: {
-        type: Boolean, 
-        default: false
-      }
-    }],
+    participants: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: "User" },
+        voted: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
     status: {
       type: String,
       enum: ["active", "closed"],
       default: "active",
     },
     event: { type: Schema.Types.ObjectId, ref: "Event" },
-    owner: { type: Schema.Types.ObjectId, ref: "User" }
+    owner: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     timestamps: true,
