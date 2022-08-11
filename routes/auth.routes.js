@@ -17,11 +17,11 @@ const createToken = require("../services/createToken");
 router.post("/signup", (req, res) => {
   const { email, password, username, image } = req.body;
 
-
-
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  if (email === ""  || !emailRegex.test(email)) {
-    return res.status(400).json({ errorMessageEmail: "Provide a valid email address." });
+  if (email === "" || !emailRegex.test(email)) {
+    return res
+      .status(400)
+      .json({ errorMessageEmail: "Provide a valid email address." });
   }
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
@@ -32,7 +32,7 @@ router.post("/signup", (req, res) => {
     });
   }
 
-  if ( username === ""  ) {
+  if (username === "") {
     return res.status(400).json({ errorMessageUsername: "Provide a username" });
   }
 
@@ -75,16 +75,16 @@ router.post("/signup", (req, res) => {
 router.post("/login", (req, res, next) => {
   const { email, password } = req.body;
 
-  if (email === "" || password === "") {
+  if (email === "") {
     return res
       .status(400)
-      .json({ errorMessage: "Please provide your email and password." });
+      .json({ errorMessageEmail: "Please provide your email." });
   }
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-  if (!passwordRegex.test(password)) {
+  if (password === "" || !passwordRegex.test(password)) {
     return res.status(400).json({
-      errorMessage:
+      errorMessagePassword:
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
   }
@@ -114,7 +114,6 @@ router.post("/login", (req, res, next) => {
 });
 
 router.get("/verify", isAuthenticated, (req, res, next) => {
-
   res.json(req.payload);
 });
 

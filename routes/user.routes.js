@@ -51,7 +51,7 @@ router.put("/users/:userId", (req, res) => {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
   }
-
+  
   User.findByIdAndUpdate(
     userId,
     { username, image },
