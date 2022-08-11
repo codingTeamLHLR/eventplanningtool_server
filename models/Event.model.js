@@ -25,7 +25,6 @@ const eventSchema = new Schema(
         default: "pending"
       }
     }],
-    threads: [{ type: Schema.Types.ObjectId, ref: "Thread" }],
     polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }],
     organizers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     image: String,

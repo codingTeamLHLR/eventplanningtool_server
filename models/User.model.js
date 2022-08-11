@@ -4,25 +4,19 @@ const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: [true, "Email address is required."],
+      required: true,
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, "Please use a valid email address."],
+      match: [/^\S+@\S+\.\S+$/],
     },
     password: {
       type: String,
-      required: [true, "Password is required."],
+      required: true,
     },
     username: {
       type: String,
-      required: [true, "Username is required."],
-    },
-    birthdate: {
-      type: Date,
-      required: [true, "Birthdate is required."],
-      min: () => "1900-01-01",
-      max: () => Date.now(),
+      required: true,
     },
     image: String,
   },

@@ -15,27 +15,25 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const createToken = require("../services/createToken");
 
 router.post("/signup", (req, res) => {
-  const { email, password, username, birthdate, image } = req.body;
+  const { email, password, username, image } = req.body;
 
-  if (email === "" || password === "" || username === "" || birthdate === "") {
-    res
-      .status(400)
-      .json({ errorMessage: "Provide email, password, name and birthdate" });
-    return;
-  }
+
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  if (!emailRegex.test(email)) {
-    res.status(400).json({ errorMessage: "Provide a valid email address." });
-    return;
+  if (email === ""  || !emailRegex.test(email)) {
+    return res.status(400).json({ errorMessageEmail: "Provide a valid email address." });
   }
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-  if (!passwordRegex.test(password)) {
+  if (password === "" || !passwordRegex.test(password)) {
     return res.status(400).json({
-      errorMessage:
+      errorMessagePassword:
         "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
+  }
+
+  if ( username === ""  ) {
+    return res.status(400).json({ errorMessageUsername: "Provide a username" });
   }
 
   User.findOne({ email }).then((found) => {
@@ -53,14 +51,13 @@ router.post("/signup", (req, res) => {
           email,
           password: hashedPassword,
           username,
-          birthdate,
           image,
         });
       })
       .then((user) => {
-        const { email, username, birthdate, _id, image } = user;
+        const { email, username, _id, image } = user;
 
-        const newUser = { email, username, birthdate, _id, image };
+        const newUser = { email, username, _id, image };
 
         const authToken = createToken(user);
 

@@ -23,7 +23,6 @@ app.use("/api", allRoutes);
 app.use("/api", require("./routes/auth.routes"));
 app.use("/api", isAuthenticated, require("./routes/event.routes"));
 app.use("/api/events/:eventId", require("./routes/poll.routes"));
-app.use("/api/events/:eventId", require("./routes/thread.routes"));
 app.use("/api", require("./routes/user.routes"));
 // app.use("/api", isAuthenticated, require("./routes/user.routes"));
 

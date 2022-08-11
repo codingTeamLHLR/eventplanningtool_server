@@ -2,7 +2,6 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 
 const Event = require("../models/Event.model");
-const Thread = require("../models/Thread.model");
 const Poll = require("../models/Poll.model");
 
 //Create a new event
@@ -10,17 +9,17 @@ router.post("/events", (req, res, next) => {
   const { name, date, location, participants, organizers, image } = req.body;
   const userId = req.payload._id;
 
-  const allParticipants = [{user: userId, status: "accepted"}]
+  const allParticipants = [{ user: userId, status: "accepted" }];
 
-    if(participants){
-      participants.forEach((participant) => {
-        allParticipants.push({user: participant})
-      });
-    }
+  if (participants) {
+    participants.forEach((participant) => {
+      allParticipants.push({ user: participant });
+    });
+  }
 
-  const allOrganizers = [userId]
-    if(organizers){
-      allOrganizers.push(...organizers);
+  const allOrganizers = [userId];
+  if (organizers) {
+    allOrganizers.push(...organizers);
   }
 
   if (name === "") {
@@ -34,7 +33,6 @@ router.post("/events", (req, res, next) => {
     date,
     location,
     participants: allParticipants,
-    threads: [],
     polls: [],
     organizers: allOrganizers,
     image,
@@ -47,7 +45,7 @@ router.post("/events", (req, res, next) => {
 router.get("/events", (req, res, next) => {
   const userId = req.payload._id;
 
-  Event.find({'participants.user':{ $in: userId }})
+  Event.find({ "participants.user": { $in: userId } })
     .then((events) => res.json(events))
     .catch((err) => res.json(err));
 });
@@ -62,10 +60,10 @@ router.get("/events/:eventId", (req, res, next) => {
   }
 
   Event.findById(eventId)
-    .populate("threads polls organizers")
+    .populate("polls organizers")
     .populate({
-      path: "participants", 
-      populate: { path: "user"}
+      path: "participants",
+      populate: { path: "user" },
     })
     .then((event) => res.status(200).json(event))
     .catch((error) => res.json(error));
@@ -92,19 +90,31 @@ router.put("/events/:eventId", (req, res, next) => {
       }
 
       event.participants.forEach((prevParticipant) => {
-        const search = JSON.stringify(prevParticipant.user).replaceAll("\"","");
+        const search = JSON.stringify(prevParticipant.user).replaceAll('"', "");
 
-        if(participants.includes(search)) {
-          allParticipants.push({user: search, status: prevParticipant.status});
+        if (participants.includes(search)) {
+          allParticipants.push({
+            user: search,
+            status: prevParticipant.status,
+          });
           newParticipants.splice(newParticipants.indexOf(search), 1);
         }
-      })
+      });
 
-      newParticipants.forEach((newParticipant) => allParticipants.push({user: newParticipant}))
+      newParticipants.forEach((newParticipant) =>
+        allParticipants.push({ user: newParticipant })
+      );
 
       return Event.findByIdAndUpdate(
         eventId,
-        { name, date, location, participants: allParticipants, organizers, image },
+        {
+          name,
+          date,
+          location,
+          participants: allParticipants,
+          organizers,
+          image,
+        },
         { returnDocument: "after" }
       );
     })
@@ -130,12 +140,7 @@ router.delete("/events/:eventId", (req, res, next) => {
       return Event.findByIdAndRemove(eventId);
     })
     .then((deletedEvent) => {
-      const deleteThreads = Thread.deleteMany({
-        _id: { $in: deletedEvent.threads },
-      });
-      const deletePolls = Poll.deleteMany({ _id: { $in: deletedEvent.polls } });
-
-      return Promise.all([deleteThreads, deletePolls]);
+      return Poll.deleteMany({ _id: { $in: deletedEvent.polls } });
     })
     .then((response) => {
       res.json({ message: `Event with ${eventId} is removed successfully.` });
@@ -146,19 +151,18 @@ router.delete("/events/:eventId", (req, res, next) => {
 router.put("/events/:eventId/status", (req, res, next) => {
   const { eventId } = req.params;
   const userId = req.payload._id;
-  const {status} = req.body;
+  const { status } = req.body;
 
-  Event.findOneAndUpdate( 
-    {eventId, 'participants.user':{$in: userId }}, 
-    {$set: {'participants.$.status': status}},
+  Event.findOneAndUpdate(
+    { eventId, "participants.user": { $in: userId } },
+    { $set: { "participants.$.status": status } },
     { returnDocument: "after" }
-    )
+  )
     .then((updatedEvent) => {
-      res.json(updatedEvent)
-      console.log(updatedEvent)
+      res.json(updatedEvent);
+      console.log(updatedEvent);
     })
-    .catch((error) => res.json(error))
-}
-)
+    .catch((error) => res.json(error));
+});
 
 module.exports = router;
