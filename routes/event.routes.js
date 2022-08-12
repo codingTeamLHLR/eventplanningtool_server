@@ -38,7 +38,7 @@ router.post("/events", (req, res, next) => {
     image,
   })
     .then((response) => res.json(response))
-    .catch((err) => res.json(err));
+    .catch((error) => res.json(error));
 });
 
 //Get all events as participant or organizer
@@ -48,7 +48,7 @@ router.get("/events", (req, res, next) => {
   Event.find({ "participants.user": { $in: userId } })
     .populate("organizers")
     .then((events) => res.json(events))
-    .catch((err) => res.json(err));
+    .catch((error) => res.json(error));
 });
 
 //Get specific event
@@ -56,7 +56,7 @@ router.get("/events/:eventId", (req, res, next) => {
   const { eventId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    res.status(400).json({ message: "Specified id is not valid" });
+    res.status(400).json({ errorMessage: "Specified id is not valid" });
     return;
   }
 
@@ -77,8 +77,14 @@ router.put("/events/:eventId", (req, res, next) => {
   const { name, date, location, participants, organizers, image } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    res.status(400).json({ message: "Specified id is not valid" });
+    res.status(400).json({ errorMessage: "Specified id is not valid" });
     return;
+  }
+
+  if (name === "") {
+    return res
+      .status(400)
+      .json({ errorMessage: "Please provide a name for your event." });
   }
 
   const allParticipants = [];
@@ -120,7 +126,7 @@ router.put("/events/:eventId", (req, res, next) => {
       );
     })
     .then((updatedEvent) => res.json(updatedEvent))
-    .catch((error) => res.status(400).json({ message: error.message }));
+    .catch((error) => res.status(400).json({ errorMessage: error.message  }));
 });
 
 //Delete specific event (protected for organizers)
@@ -129,7 +135,7 @@ router.delete("/events/:eventId", (req, res, next) => {
   const userId = req.payload._id;
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    res.status(400).json({ message: "Specified id is not valid" });
+    res.status(400).json({ errorMessage: "Specified id is not valid" });
     return;
   }
 
@@ -144,9 +150,9 @@ router.delete("/events/:eventId", (req, res, next) => {
       return Poll.deleteMany({ _id: { $in: deletedEvent.polls } });
     })
     .then((response) => {
-      res.json({ message: `Event with ${eventId} is removed successfully.` });
+      res.json({ errorMessage: `Event with ${eventId} is removed successfully.` });
     })
-    .catch((error) => res.status(400).json({ message: error.message }));
+    .catch((error) => res.status(400).json({ errorMessage: error.message }));
 });
 
 router.put("/events/:eventId/status", (req, res, next) => {

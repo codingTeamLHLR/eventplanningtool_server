@@ -21,19 +21,19 @@ router.post("/signup", (req, res) => {
   if (email === "" || !emailRegex.test(email)) {
     return res
       .status(400)
-      .json({ errorMessageEmail: "Provide a valid email address." });
+      .json({ errorMessage: "Provide a valid email address." });
   }
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
   if (password === "" || !passwordRegex.test(password)) {
     return res.status(400).json({
-      errorMessagePassword:
+      errorMessage:
         "The password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
   }
 
   if (username === "") {
-    return res.status(400).json({ errorMessageUsername: "Please provide a username" });
+    return res.status(400).json({ errorMessage: "Please provide a username" });
   }
 
   User.findOne({ email }).then((found) => {
@@ -65,9 +65,9 @@ router.post("/signup", (req, res) => {
       })
       .catch((error) => {
         if (error instanceof mongoose.Error.ValidationError) {
-          return res.status(400).json({ message: error.message });
+          return res.status(400).json({ errorMessage: error.message });
         }
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ errorMessage: error.message });
       });
   });
 });
@@ -78,13 +78,13 @@ router.post("/login", (req, res, next) => {
   if (email === "") {
     return res
       .status(400)
-      .json({ errorMessageEmail: "Please provide your email." });
+      .json({ errorMessage: "Please provide your email." });
   }
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
   if (password === "" || !passwordRegex.test(password)) {
     return res.status(400).json({
-      errorMessagePassword:
+      errorMessage:
         "The password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
     });
   }
@@ -93,13 +93,13 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(400).json({
-          errorMessageEmail: "This email does not exist, please signup first.",
+          errorMessage: "This email does not exist, please signup first.",
         });
       }
 
       bcrypt.compare(password, user.password).then((isSamePassword) => {
         if (!isSamePassword) {
-          return res.status(400).json({ errorMessagePassword: "Wrong credentials." });
+          return res.status(400).json({ errorMessage: "Wrong credentials." });
         }
 
         const authToken = createToken(user);

@@ -13,6 +13,9 @@ router.post("/polls", (req, res, next) => {
     return res.status(400).json({ errorMessage: "Please provide a title for your poll." });
   }
 
+  if (optionNames.length < 2) {
+    return res.status(400).json({ errorMessage: "Please provide at least two options." });
+  }
 
   let options = [];
 

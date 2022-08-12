@@ -30,7 +30,7 @@ router.get("/users/:userId", (req, res) => {
   const { userId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    res.status(400).json({ message: "Specified id is not valid" });
+    res.status(400).json({ errorMessage: "Specified id is not valid" });
     return;
   }
 
@@ -48,7 +48,7 @@ router.put("/users/:userId", (req, res) => {
   const { username, image } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    res.status(400).json({ message: "Specified id is not valid" });
+    res.status(400).json({ errorMessage: "Specified id is not valid" });
     return;
   }
   
@@ -65,7 +65,7 @@ router.delete("/users/:userId", (req, res) => {
   const { userId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    res.status(400).json({ message: "Specified id is not valid" });
+    res.status(400).json({ errorMessage: "Specified id is not valid" });
     return;
   }
 
