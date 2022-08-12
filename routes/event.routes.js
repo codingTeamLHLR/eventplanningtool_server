@@ -161,7 +161,7 @@ router.put("/events/:eventId/status", (req, res, next) => {
   const { status } = req.body;
 
   Event.findOneAndUpdate(
-    { eventId, "participants.user": { $in: userId } },
+    {  _id: eventId, "participants.user": { $in: userId } },
     { $set: { "participants.$.status": status } },
     { returnDocument: "after" }
   )
