@@ -1,4 +1,4 @@
-# Rumble - your eventplannningtool 
+# Rumble - your eventplanningtool 
 
 Say goodbye to hundreds of different whatsapp chats and exploding messages and discussions. See and plan all your events in one place with your friends and decide on details based on votings (Do you want red wine or white wine?) or even plan a private poll for deciding ona gift for the amazing host of the event you are attending. 
 
