@@ -126,7 +126,7 @@ router.put("/events/:eventId", (req, res, next) => {
       );
     })
     .then((updatedEvent) => res.json(updatedEvent))
-    .catch((error) => res.status(400).json({ errorMessage: error.message  }));
+    .catch((error) => res.status(400).json({ errorMessage: error.message }));
 });
 
 //Delete specific event (protected for organizers)
@@ -150,7 +150,9 @@ router.delete("/events/:eventId", (req, res, next) => {
       return Poll.deleteMany({ _id: { $in: deletedEvent.polls } });
     })
     .then((response) => {
-      res.json({ errorMessage: `Event with ${eventId} is removed successfully.` });
+      res.json({
+        errorMessage: `Event with ${eventId} is removed successfully.`,
+      });
     })
     .catch((error) => res.status(400).json({ errorMessage: error.message }));
 });
@@ -161,7 +163,7 @@ router.put("/events/:eventId/status", (req, res, next) => {
   const { status } = req.body;
 
   Event.findOneAndUpdate(
-    {  _id: eventId, "participants.user": { $in: userId } },
+    { _id: eventId, "participants.user": { $in: userId } },
     { $set: { "participants.$.status": status } },
     { returnDocument: "after" }
   )

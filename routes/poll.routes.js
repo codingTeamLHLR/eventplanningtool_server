@@ -10,11 +10,15 @@ router.post("/polls", (req, res, next) => {
   const userId = req.payload._id;
 
   if (title === "") {
-    return res.status(400).json({ errorMessage: "Please provide a title for your poll." });
+    return res
+      .status(400)
+      .json({ errorMessage: "Please provide a title for your poll." });
   }
 
   if (optionNames.length < 2) {
-    return res.status(400).json({ errorMessage: "Please provide at least two options." });
+    return res
+      .status(400)
+      .json({ errorMessage: "Please provide at least two options." });
   }
 
   let options = [];
@@ -29,7 +33,7 @@ router.post("/polls", (req, res, next) => {
       allParticipants.push({ user: participant });
     });
   }
-console.log(allParticipants)
+  console.log(allParticipants);
   Poll.create({
     title,
     description,
@@ -75,8 +79,8 @@ router.put("/polls/:pollId", (req, res, next) => {
   const { pollId } = req.params;
   const { status, newVotes, optionId, voted } = req.body;
   const userId = req.payload._id;
-console.log(pollId)
-  console.log(req.body)
+  console.log(pollId);
+  console.log(req.body);
   if (!mongoose.Types.ObjectId.isValid(pollId)) {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
@@ -95,28 +99,29 @@ console.log(pollId)
         { $set: { "options.$.votes": newVotes } },
         { returnDocument: "after" }
       )
-      .then((updatedPoll) => resolve(updatedPoll))
-      .catch(error => reject(error));
-
+        .then((updatedPoll) => resolve(updatedPoll))
+        .catch((error) => reject(error));
     });
-    
+
     const updateParticipant = new Promise((resolve, reject) => {
       Poll.findOneAndUpdate(
         { _id: pollId, "participants.user": userId },
         { $set: { "participants.$.voted": voted } },
         { returnDocument: "after" }
       )
-      .then((updatedPoll) => resolve(updatedPoll))
-      .catch(error => reject(error));
+        .then((updatedPoll) => resolve(updatedPoll))
+        .catch((error) => reject(error));
     });
 
     Promise.all([updateVotes, updateParticipant])
       .then((response) => {
-        console.log(response)
-        res.json(response)})
+        console.log(response);
+        res.json(response);
+      })
       .catch((error) => {
-        console.log(error)
-        res.json(error)});
+        console.log(error);
+        res.json(error);
+      });
   }
 });
 

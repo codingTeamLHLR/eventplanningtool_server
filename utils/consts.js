@@ -1,3 +1,4 @@
-const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost/eventplanningtool-server";
+const MONGO_URI =
+  process.env.MONGODB_URI || "mongodb://localhost/eventplanningtool-server";
 
 module.exports = MONGO_URI;

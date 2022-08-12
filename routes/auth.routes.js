@@ -38,7 +38,9 @@ router.post("/signup", (req, res) => {
 
   User.findOne({ email }).then((found) => {
     if (found) {
-      return res.status(400).json({ errorMessage: "This email already exists." });
+      return res
+        .status(400)
+        .json({ errorMessage: "This email already exists." });
     }
 
     // if user is not found, create a new user - start with hashing the password
@@ -76,9 +78,7 @@ router.post("/login", (req, res, next) => {
   const { email, password } = req.body;
 
   if (email === "") {
-    return res
-      .status(400)
-      .json({ errorMessage: "Please provide your email." });
+    return res.status(400).json({ errorMessage: "Please provide your email." });
   }
 
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
