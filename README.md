@@ -13,8 +13,8 @@ https://github.com/codingTeamLHLR/eventplanningtool_client
 
 ## Demo 
 
-Check out our app here (and please not that it is designed for mobile): 
-https://eventplanningtool.netlify.app/events
+~~Check out our app here:~~
+~~https://eventplanningtool.netlify.app/events~~
 
 ### How to run the app on local
 
